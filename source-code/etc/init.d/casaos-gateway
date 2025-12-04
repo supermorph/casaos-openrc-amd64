@@ -1,0 +1,20 @@
+#!/sbin/openrc-run
+# Copyright 2025 CasaOS Team
+# Distributed under the terms of the GNU General Public License v2
+
+name="CasaOS Gateway Service"
+description="CasaOS Gateway - API gateway and web interface server"
+
+command="/usr/bin/casaos-gateway"
+command_background=true
+pidfile="/var/run/casaos/gateway.pid"
+
+depend() {
+	need net
+	use dns
+	after casaos-message-bus
+}
+
+start_pre() {
+	checkpath --directory --mode 0755 /var/run/casaos
+}

@@ -1,0 +1,44 @@
+#!/bin/bash
+set -e
+
+mkdir -p /var/run/casaos
+
+# Enable services at boot using OpenRC
+# Services in dependency order: message-bus -> gateway -> user-service -> local-storage -> app-management -> casaos
+SERVICES_IN_ORDER="casaos-message-bus casaos-gateway casaos-user-service casaos-local-storage casaos-app-management casaos"
+
+for service in $SERVICES_IN_ORDER; do
+    if [ -f "/etc/init.d/$service" ]; then
+        # Make executable
+        chmod +x /etc/init.d/$service
+        
+        # Add to default runlevel
+        if command -v rc-update >/dev/null 2>&1; then
+            rc-update add "$service" default || true
+        fi
+    fi
+done
+
+# Start services in dependency order
+echo "Starting CasaOS services..."
+for service in $SERVICES_IN_ORDER; do
+    if [ -f "/etc/init.d/$service" ]; then
+        echo "Starting $service..."
+        if command -v rc-service >/dev/null 2>&1; then
+            rc-service "$service" start || true
+        else
+            /etc/init.d/"$service" start || true
+        fi
+        sleep 3
+    fi
+done
+
+echo ""
+echo "CasaOS OpenRC installation complete!"
+echo "Services should now be running and will auto-start on boot."
+echo "Access the web interface at http://localhost"
+echo ""
+echo "Manage services with: rc-service <service> start|stop|restart|status"
+echo "Example: rc-service casaos status"
+
+exit 0

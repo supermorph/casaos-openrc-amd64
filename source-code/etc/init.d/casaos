@@ -1,0 +1,21 @@
+#!/sbin/openrc-run
+# Copyright 2025 CasaOS Team
+# Distributed under the terms of the GNU General Public License v2
+
+name="CasaOS Main Service"
+description="CasaOS - A simple, easy-to-use, elegant open-source home cloud system"
+
+command="/usr/bin/casaos"
+command_args="-c /etc/casaos/casaos.conf"
+command_background=true
+pidfile="/var/run/casaos/casaos.pid"
+
+depend() {
+	need net
+	use dns
+	after casaos-message-bus casaos-gateway casaos-user-service casaos-local-storage casaos-app-management
+}
+
+start_pre() {
+	checkpath --directory --mode 0755 /var/run/casaos
+}

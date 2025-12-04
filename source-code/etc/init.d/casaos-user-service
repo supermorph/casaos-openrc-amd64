@@ -1,0 +1,19 @@
+#!/sbin/openrc-run
+# Copyright 2025 CasaOS Team
+# Distributed under the terms of the GNU General Public License v2
+
+name="CasaOS User Service"
+description="CasaOS User Service - User authentication and management"
+
+command="/usr/bin/casaos-user-service"
+command_background=true
+pidfile="/var/run/casaos/user-service.pid"
+
+depend() {
+	need net
+	after casaos-message-bus casaos-gateway
+}
+
+start_pre() {
+	checkpath --directory --mode 0755 /var/run/casaos
+}

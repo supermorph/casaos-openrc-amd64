@@ -1,0 +1,18 @@
+#!/sbin/openrc-run
+# Copyright 2025 CasaOS Team
+# Distributed under the terms of the GNU General Public License v2
+
+name="CasaOS Message Bus Service"
+description="CasaOS Message Bus - Inter-service communication"
+
+command="/usr/bin/casaos-message-bus"
+command_background=true
+pidfile="/var/run/casaos/message-bus.pid"
+
+depend() {
+	need net
+}
+
+start_pre() {
+	checkpath --directory --mode 0755 /var/run/casaos
+}

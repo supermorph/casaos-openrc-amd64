@@ -1,0 +1,19 @@
+#!/sbin/openrc-run
+# Copyright 2025 CasaOS Team
+# Distributed under the terms of the GNU General Public License v2
+
+name="CasaOS App Management Service"
+description="CasaOS App Management - Docker container and application management"
+
+command="/usr/bin/casaos-app-management"
+command_background=true
+pidfile="/var/run/casaos/app-management.pid"
+
+depend() {
+	need net docker
+	after casaos-message-bus casaos-gateway casaos-user-service casaos-local-storage
+}
+
+start_pre() {
+	checkpath --directory --mode 0755 /var/run/casaos
+}
